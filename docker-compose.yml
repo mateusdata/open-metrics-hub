@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    container_name: otel-collector
+    ports:
+      - "4318:4318"    # Para endpoints OTLP, se necessário
+      - "8889:8889"    # Endpoint onde o exporter prometheus vai expor as métricas
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro
+    privileged: true
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus123
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
